@@ -1,0 +1,36 @@
+<UserControl x:Class="Sweeper.Wpf.Features.Board.BoardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:board="clr-namespace:Sweeper.Wpf.Features.Board">
+  <ItemsControl ItemsSource="{Binding Cells}" Focusable="False">
+
+    <ItemsControl.ItemsPanel>
+      <ItemsPanelTemplate>
+        <UniformGrid Columns="{Binding Columns}" />
+      </ItemsPanelTemplate>
+    </ItemsControl.ItemsPanel>
+
+    <ItemsControl.ItemTemplate>
+      <DataTemplate DataType="{x:Type board:CellViewModel}">
+        <Border Style="{StaticResource CellBorderStyle}">
+          <!-- Os comandos estão no MainViewModel, por isso sobe até o BoardView; o parâmetro é a célula. -->
+          <Border.InputBindings>
+            <MouseBinding Gesture="LeftClick"
+                          Command="{Binding DataContext.RevealCommand, RelativeSource={RelativeSource AncestorType=board:BoardView}}"
+                          CommandParameter="{Binding}" />
+            <MouseBinding Gesture="RightClick"
+                          Command="{Binding DataContext.ToggleFlagCommand, RelativeSource={RelativeSource AncestorType=board:BoardView}}"
+                          CommandParameter="{Binding}" />
+          </Border.InputBindings>
+
+          <Grid>
+            <TextBlock Style="{StaticResource CellNumberStyle}" />
+            <Path Style="{StaticResource CellFlagStyle}" />
+            <Path Style="{StaticResource CellMineStyle}" />
+          </Grid>
+        </Border>
+      </DataTemplate>
+    </ItemsControl.ItemTemplate>
+
+  </ItemsControl>
+</UserControl>
