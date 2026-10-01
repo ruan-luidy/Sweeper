@@ -52,6 +52,7 @@
             <TextBlock Style="{StaticResource CellNumberStyle}" />
             <Path Style="{StaticResource CellFlagStyle}" />
             <Image Style="{StaticResource CellMineStyle}" />
+            <Path Style="{StaticResource CellWrongFlagStyle}" />
           </Grid>
         </Border>
       </DataTemplate>

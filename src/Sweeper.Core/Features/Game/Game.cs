@@ -122,7 +122,7 @@ public sealed class Game
     }
 
     Finish(GameStatus.Lost);
-    Changed?.Invoke(MinePositions().ToList());
+    Changed?.Invoke(LossPositions().ToList());
   }
 
   private void Apply(RevealResult result)
@@ -138,7 +138,7 @@ public sealed class Game
     if (result.HitMine)
     {
       Finish(GameStatus.Lost);
-      affected.UnionWith(MinePositions());
+      affected.UnionWith(LossPositions());
     }
     else
     {
@@ -173,4 +173,8 @@ public sealed class Game
 
   private IEnumerable<GridPosition> MinePositions() =>
     Board.AllPositions().Where(position => Board[position].IsMine);
+
+  // Na derrota as bandeiras também mudam de cara (certa ou errada), então entram no Changed.
+  private IEnumerable<GridPosition> LossPositions() =>
+    Board.AllPositions().Where(position => Board[position].IsMine || Board[position].State == CellState.Flagged);
 }

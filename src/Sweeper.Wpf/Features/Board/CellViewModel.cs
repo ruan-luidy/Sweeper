@@ -24,6 +24,10 @@ public sealed partial class CellViewModel : ObservableObject
   [ObservableProperty]
   public partial bool IsExploded { get; private set; }
 
+  // Bandeira em célula sem mina, revelada no fim do jogo.
+  [ObservableProperty]
+  public partial bool IsWrongFlag { get; private set; }
+
   // Vizinha fechada do número sob o mouse: onde a bomba pode estar.
   [ObservableProperty]
   public partial bool IsInRange { get; set; }
@@ -39,5 +43,6 @@ public sealed partial class CellViewModel : ObservableObject
     AdjacentMines = cell.State == CellState.Revealed && !cell.IsMine ? cell.AdjacentMines : 0;
     IsMine = isGameOver && cell.IsMine;
     IsExploded = cell.IsMine && cell.State == CellState.Revealed;
+    IsWrongFlag = isGameOver && cell.State == CellState.Flagged && !cell.IsMine;
   }
 }

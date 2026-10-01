@@ -37,6 +37,19 @@
       <DataTrigger Binding="{Binding IsRangeCenter}" Value="True">
         <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
       </DataTrigger>
+      <!-- Fim de jogo: o fundo da bandeira conta se o palpite estava certo. -->
+      <MultiDataTrigger>
+        <MultiDataTrigger.Conditions>
+          <Condition Binding="{Binding State}" Value="{x:Static shared:CellState.Flagged}" />
+          <Condition Binding="{Binding IsMine}" Value="True" />
+        </MultiDataTrigger.Conditions>
+        <Setter Property="Background" Value="{DynamicResource LightSuccessBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
+      </MultiDataTrigger>
+      <DataTrigger Binding="{Binding IsWrongFlag}" Value="True">
+        <Setter Property="Background" Value="{DynamicResource LightDangerBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+      </DataTrigger>
       <DataTrigger Binding="{Binding IsExploded}" Value="True">
         <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
@@ -69,6 +82,34 @@
     <Setter Property="Visibility" Value="Collapsed" />
     <Style.Triggers>
       <DataTrigger Binding="{Binding State}" Value="{x:Static shared:CellState.Flagged}">
+        <Setter Property="Visibility" Value="Visible" />
+      </DataTrigger>
+      <!-- Fim de jogo: verde = tinha bomba; apagada (sob o X) = não tinha. -->
+      <MultiDataTrigger>
+        <MultiDataTrigger.Conditions>
+          <Condition Binding="{Binding State}" Value="{x:Static shared:CellState.Flagged}" />
+          <Condition Binding="{Binding IsMine}" Value="True" />
+        </MultiDataTrigger.Conditions>
+        <Setter Property="Fill" Value="{DynamicResource SuccessBrush}" />
+      </MultiDataTrigger>
+      <DataTrigger Binding="{Binding IsWrongFlag}" Value="True">
+        <Setter Property="Opacity" Value="0.35" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
+
+  <!-- X sobre a bandeira errada no fim do jogo. -->
+  <Style x:Key="CellWrongFlagStyle" TargetType="Path">
+    <Setter Property="Data" Value="{StaticResource CloseGeometry}" />
+    <Setter Property="Fill" Value="{DynamicResource DangerBrush}" />
+    <Setter Property="Width" Value="22" />
+    <Setter Property="Height" Value="22" />
+    <Setter Property="Stretch" Value="Uniform" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Visibility" Value="Collapsed" />
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding IsWrongFlag}" Value="True">
         <Setter Property="Visibility" Value="Visible" />
       </DataTrigger>
     </Style.Triggers>
