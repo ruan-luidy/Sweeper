@@ -11,26 +11,22 @@
     <Setter Property="Width" Value="36" />
     <Setter Property="Height" Value="36" />
     <Setter Property="Margin" Value="2" />
-    <Setter Property="CornerRadius" Value="4" />
-    <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
-    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
     <Style.Triggers>
-      <!-- Hover pinta a célula inteira, não só o contorno. -->
+      <!-- Mesmo hover do ButtonPrimary do HandyControl: só baixa a opacidade. -->
       <MultiDataTrigger>
         <MultiDataTrigger.Conditions>
           <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
           <Condition Binding="{Binding State}" Value="{x:Static shared:CellState.Hidden}" />
         </MultiDataTrigger.Conditions>
-        <Setter Property="Background" Value="{DynamicResource LightPrimaryBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource LightPrimaryBrush}" />
+        <Setter Property="Opacity" Value="0.8" />
       </MultiDataTrigger>
       <DataTrigger Binding="{Binding State}" Value="{x:Static shared:CellState.Revealed}">
-        <Setter Property="Background" Value="{DynamicResource RegionBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SecondaryRegionBrush}" />
       </DataTrigger>
       <DataTrigger Binding="{Binding IsExploded}" Value="True">
         <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
       </DataTrigger>
     </Style.Triggers>
   </Style>
@@ -51,7 +47,7 @@
 
   <Style x:Key="CellFlagStyle" TargetType="Path">
     <Setter Property="Data" Value="{StaticResource FlagGeometry}" />
-    <Setter Property="Fill" Value="{DynamicResource DangerBrush}" />
+    <Setter Property="Fill" Value="{DynamicResource TextIconBrush}" />
     <Setter Property="Width" Value="18" />
     <Setter Property="Height" Value="18" />
     <Setter Property="Stretch" Value="Uniform" />

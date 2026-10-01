@@ -6,16 +6,29 @@
            xmlns:board="clr-namespace:Sweeper.Wpf.Features.Board"
            xmlns:game="clr-namespace:Sweeper.Wpf.Features.Game"
            Title="Sweeper"
+           Background="{DynamicResource SecondaryRegionBrush}"
            WindowStartupLocation="CenterScreen"
            SizeToContent="WidthAndHeight"
            ResizeMode="CanMinimize"
            MaxWidth="{x:Static SystemParameters.MaximizedPrimaryScreenWidth}"
            MaxHeight="{x:Static SystemParameters.MaximizedPrimaryScreenHeight}">
-  <DockPanel Margin="20">
-    <game:GameHeaderView DockPanel.Dock="Top" Margin="0,0,0,16" />
+  <hc:Window.Resources>
+    <!-- Cartão branco com a sombra do HandyControl; Margin deixa espaço pra sombra não ser cortada. -->
+    <Style x:Key="CardStyle" TargetType="Border" BasedOn="{StaticResource BorderRegion}">
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Effect" Value="{StaticResource EffectShadow2}" />
+    </Style>
+  </hc:Window.Resources>
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-      <board:BoardView HorizontalAlignment="Center" />
-    </ScrollViewer>
+  <DockPanel Margin="20">
+    <Border DockPanel.Dock="Top" Style="{StaticResource CardStyle}" Padding="16,10" Margin="0,0,0,16">
+      <game:GameHeaderView />
+    </Border>
+
+    <Border Style="{StaticResource CardStyle}" Padding="12">
+      <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <board:BoardView HorizontalAlignment="Center" />
+      </ScrollViewer>
+    </Border>
   </DockPanel>
 </hc:Window>
