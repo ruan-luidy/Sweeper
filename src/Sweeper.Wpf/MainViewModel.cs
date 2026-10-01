@@ -18,10 +18,12 @@ public sealed partial class MainViewModel : ObservableObject
   private readonly Random _random;
   private readonly Func<GameSettings, Task<GameSettings?>> _editSettings;
   private readonly DispatcherTimer _timer;
+  private readonly List<CellViewModel> _rangeCells = [];
 
   private GameSettings _settings = Difficulty.Beginner;
   private Game _game;
   private bool _isPressing;
+  private CellViewModel? _hoveredCell;
 
   // editSettings devolve null quando o usuário cancela.
   public MainViewModel(TimeProvider timeProvider, Random random, Func<GameSettings, Task<GameSettings?>> editSettings)
@@ -97,6 +99,54 @@ public sealed partial class MainViewModel : ObservableObject
     UpdateFace();
   }
 
+  [RelayCommand]
+  private void HoverCell(CellViewModel cell)
+  {
+    _hoveredCell = cell;
+    UpdateRange();
+  }
+
+  [RelayCommand]
+  private void LeaveCell(CellViewModel cell)
+  {
+    // MouseLeave da célula antiga pode chegar depois do MouseEnter da nova.
+    if (_hoveredCell == cell)
+    {
+      _hoveredCell = null;
+      UpdateRange();
+    }
+  }
+
+  // Liga o range nas vizinhas fechadas do número sob o mouse e desliga o anterior.
+  private void UpdateRange()
+  {
+    foreach (var cell in _rangeCells)
+    {
+      cell.IsInRange = false;
+      cell.IsRangeCenter = false;
+    }
+
+    _rangeCells.Clear();
+
+    if (_hoveredCell is not { State: CellState.Revealed, AdjacentMines: > 0 } center || _game.IsOver)
+    {
+      return;
+    }
+
+    center.IsRangeCenter = true;
+    _rangeCells.Add(center);
+
+    foreach (var position in _game.Board.Neighbors(center.Position))
+    {
+      var neighbor = Cells[(position.Y * _game.Board.Width) + position.X];
+      if (neighbor.State != CellState.Revealed)
+      {
+        neighbor.IsInRange = true;
+        _rangeCells.Add(neighbor);
+      }
+    }
+  }
+
   [MemberNotNull(nameof(_game))]
   private void StartGame(GameSettings settings)
   {
@@ -104,6 +154,9 @@ public sealed partial class MainViewModel : ObservableObject
     {
       _game.Changed -= OnGameChanged;
     }
+
+    _hoveredCell = null;
+    _rangeCells.Clear();
 
     _game = new Game(settings, _timeProvider, _random);
     _game.Changed += OnGameChanged;
@@ -131,6 +184,8 @@ public sealed partial class MainViewModel : ObservableObject
       Cells[(position.Y * _game.Board.Width) + position.X].Update(_game.Board[position], isGameOver);
     }
 
+    // O range muda quando vizinhas abrem (chord) e some no fim do jogo.
+    UpdateRange();
     RefreshHeader();
   }
 

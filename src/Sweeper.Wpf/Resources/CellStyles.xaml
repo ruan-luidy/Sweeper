@@ -29,6 +29,14 @@
         <Setter Property="Background" Value="{DynamicResource RegionBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
       </DataTrigger>
+      <!-- Range do número sob o mouse, em Warning: "cuidado, pode ter bomba aqui". -->
+      <DataTrigger Binding="{Binding IsInRange}" Value="True">
+        <Setter Property="Background" Value="{DynamicResource LightWarningBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+      </DataTrigger>
+      <DataTrigger Binding="{Binding IsRangeCenter}" Value="True">
+        <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+      </DataTrigger>
       <DataTrigger Binding="{Binding IsExploded}" Value="True">
         <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}" />

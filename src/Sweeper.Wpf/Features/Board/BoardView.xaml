@@ -37,6 +37,17 @@
                           CommandParameter="{Binding}" />
           </Border.InputBindings>
 
+          <hc:Interaction.Triggers>
+            <hc:EventTrigger EventName="MouseEnter">
+              <hc:InvokeCommandAction Command="{Binding DataContext.HoverCellCommand, RelativeSource={RelativeSource AncestorType=board:BoardView}}"
+                                      CommandParameter="{Binding}" />
+            </hc:EventTrigger>
+            <hc:EventTrigger EventName="MouseLeave">
+              <hc:InvokeCommandAction Command="{Binding DataContext.LeaveCellCommand, RelativeSource={RelativeSource AncestorType=board:BoardView}}"
+                                      CommandParameter="{Binding}" />
+            </hc:EventTrigger>
+          </hc:Interaction.Triggers>
+
           <Grid>
             <TextBlock Style="{StaticResource CellNumberStyle}" />
             <Path Style="{StaticResource CellFlagStyle}" />

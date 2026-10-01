@@ -24,6 +24,14 @@ public sealed partial class CellViewModel : ObservableObject
   [ObservableProperty]
   public partial bool IsExploded { get; private set; }
 
+  // Vizinha fechada do número sob o mouse: onde a bomba pode estar.
+  [ObservableProperty]
+  public partial bool IsInRange { get; set; }
+
+  // O próprio número sob o mouse, centro do range.
+  [ObservableProperty]
+  public partial bool IsRangeCenter { get; set; }
+
   // Só passa pra UI o que o jogador pode ver: número só em célula aberta, mina só no fim do jogo.
   public void Update(Cell cell, bool isGameOver)
   {
