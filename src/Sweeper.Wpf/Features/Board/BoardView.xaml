@@ -1,8 +1,22 @@
 <UserControl x:Class="Sweeper.Wpf.Features.Board.BoardView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:board="clr-namespace:Sweeper.Wpf.Features.Board">
   <ItemsControl ItemsSource="{Binding Cells}" Focusable="False">
+
+    <!-- Botão segurado no tabuleiro deixa a carinha nervosa. MouseLeave cobre soltar fora do tabuleiro. -->
+    <hc:Interaction.Triggers>
+      <hc:EventTrigger EventName="PreviewMouseLeftButtonDown">
+        <hc:InvokeCommandAction Command="{Binding PressCommand}" />
+      </hc:EventTrigger>
+      <hc:EventTrigger EventName="PreviewMouseLeftButtonUp">
+        <hc:InvokeCommandAction Command="{Binding ReleaseCommand}" />
+      </hc:EventTrigger>
+      <hc:EventTrigger EventName="MouseLeave">
+        <hc:InvokeCommandAction Command="{Binding ReleaseCommand}" />
+      </hc:EventTrigger>
+    </hc:Interaction.Triggers>
 
     <ItemsControl.ItemsPanel>
       <ItemsPanelTemplate>
@@ -26,7 +40,7 @@
           <Grid>
             <TextBlock Style="{StaticResource CellNumberStyle}" />
             <Path Style="{StaticResource CellFlagStyle}" />
-            <Path Style="{StaticResource CellMineStyle}" />
+            <Image Style="{StaticResource CellMineStyle}" />
           </Grid>
         </Border>
       </DataTemplate>

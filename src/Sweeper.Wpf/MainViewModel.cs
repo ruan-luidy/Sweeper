@@ -6,11 +6,14 @@ using Sweeper.Core.Features.Game;
 using Sweeper.Core.Features.Settings;
 using Sweeper.Core.Shared;
 using Sweeper.Wpf.Features.Board;
+using Sweeper.Wpf.Features.Game;
 
 namespace Sweeper.Wpf;
 
 public sealed partial class MainViewModel : ObservableObject
 {
+  private static readonly TimeSpan SweatingThreshold = TimeSpan.FromSeconds(10);
+
   private readonly TimeProvider _timeProvider;
   private readonly Random _random;
   private readonly Func<GameSettings, GameSettings?> _editSettings;
@@ -18,6 +21,7 @@ public sealed partial class MainViewModel : ObservableObject
 
   private GameSettings _settings = Difficulty.Beginner;
   private Game _game;
+  private bool _isPressing;
 
   // editSettings devolve null quando o usuário cancela.
   public MainViewModel(TimeProvider timeProvider, Random random, Func<GameSettings, GameSettings?> editSettings)
@@ -53,6 +57,9 @@ public sealed partial class MainViewModel : ObservableObject
   [ObservableProperty]
   public partial GameStatus Status { get; private set; }
 
+  [ObservableProperty]
+  public partial GameFace Face { get; private set; }
+
   [RelayCommand]
   private void Reveal(CellViewModel cell) => _game.Reveal(cell.Position);
 
@@ -73,6 +80,20 @@ public sealed partial class MainViewModel : ObservableObject
 
     _settings = settings;
     StartGame(settings);
+  }
+
+  [RelayCommand]
+  private void Press()
+  {
+    _isPressing = true;
+    UpdateFace();
+  }
+
+  [RelayCommand]
+  private void Release()
+  {
+    _isPressing = false;
+    UpdateFace();
   }
 
   [MemberNotNull(nameof(_game))]
@@ -134,5 +155,19 @@ public sealed partial class MainViewModel : ObservableObject
 
     // TotalMinutes porque "mm" volta pra 00 depois de uma hora.
     TimeText = $"{(int)time.TotalMinutes:00}:{time.Seconds:00}";
+    UpdateFace();
+  }
+
+  // Fim de jogo ganha de tudo; depois o mouse segurado; depois o tempo acabando.
+  private void UpdateFace()
+  {
+    Face = _game.Status switch
+    {
+      GameStatus.Won => GameFace.Won,
+      GameStatus.Lost => GameFace.Lost,
+      _ when _isPressing => GameFace.Nervous,
+      GameStatus.Playing when _game.TimeRemaining <= SweatingThreshold => GameFace.Sweating,
+      _ => GameFace.Happy,
+    };
   }
 }

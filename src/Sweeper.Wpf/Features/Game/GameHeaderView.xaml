@@ -1,68 +1,70 @@
 <UserControl x:Class="Sweeper.Wpf.Features.Game.GameHeaderView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:game="clr-namespace:Sweeper.Core.Features.Game;assembly=Sweeper.Core">
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:game="clr-namespace:Sweeper.Wpf.Features.Game">
   <Grid>
-    <!-- Colunas laterais iguais mantêm os botões centralizados. -->
+    <!-- Colunas laterais iguais mantêm a carinha centralizada. -->
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
       <ColumnDefinition Width="Auto" />
       <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
 
     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" ToolTip="Minas restantes">
-      <Path Data="{StaticResource MineGeometry}"
-            Fill="{DynamicResource PrimaryTextBrush}"
-            Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center" />
+      <Image Source="{StaticResource BombEmoji}" Style="{StaticResource EmojiImageStyle}" Width="24" Height="24" />
       <TextBlock Text="{Binding MinesRemaining}" Margin="6,0,0,0" FontSize="16" FontWeight="Bold"
                  VerticalAlignment="Center" />
     </StackPanel>
 
-    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="12,0">
-      <Button Content="Novo jogo" Command="{Binding NewGameCommand}" Style="{StaticResource ButtonPrimary}" />
-      <Button Content="Configurações" Command="{Binding OpenSettingsCommand}" Margin="8,0,0,0" />
-    </StackPanel>
-
-    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-      <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource SecondaryTextBrush}">
-        <TextBlock.Style>
-          <Style TargetType="TextBlock">
-            <Setter Property="Text" Value="Tempo" />
+    <!-- Novo jogo, no estilo do Campo Minado clássico: a carinha é o botão. -->
+    <Button Grid.Column="1" Command="{Binding NewGameCommand}" ToolTip="Novo jogo"
+            Width="48" Height="48" Padding="4" Margin="12,0">
+      <Image>
+        <Image.Style>
+          <Style TargetType="Image" BasedOn="{StaticResource EmojiImageStyle}">
+            <Setter Property="Source" Value="{StaticResource FaceHappyEmoji}" />
             <Style.Triggers>
-              <DataTrigger Binding="{Binding HasTimeLimit}" Value="True">
-                <Setter Property="Text" Value="Restante" />
+              <DataTrigger Binding="{Binding Face}" Value="{x:Static game:GameFace.Nervous}">
+                <Setter Property="Source" Value="{StaticResource FaceNervousEmoji}" />
+              </DataTrigger>
+              <DataTrigger Binding="{Binding Face}" Value="{x:Static game:GameFace.Sweating}">
+                <Setter Property="Source" Value="{StaticResource FaceSweatingEmoji}" />
+              </DataTrigger>
+              <DataTrigger Binding="{Binding Face}" Value="{x:Static game:GameFace.Won}">
+                <Setter Property="Source" Value="{StaticResource FaceWonEmoji}" />
+              </DataTrigger>
+              <DataTrigger Binding="{Binding Face}" Value="{x:Static game:GameFace.Lost}">
+                <Setter Property="Source" Value="{StaticResource FaceLostEmoji}" />
               </DataTrigger>
             </Style.Triggers>
           </Style>
-        </TextBlock.Style>
-      </TextBlock>
-      <TextBlock Text="{Binding TimeText}" Margin="6,0,0,0" FontSize="16" FontWeight="Bold"
-                 VerticalAlignment="Center" />
-    </StackPanel>
+        </Image.Style>
+      </Image>
+    </Button>
 
-    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Margin="0,8,0,0" HorizontalAlignment="Center"
-               FontSize="14" FontWeight="Bold">
-      <TextBlock.Style>
-        <Style TargetType="TextBlock">
-          <Setter Property="Visibility" Value="Collapsed" />
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding Status}" Value="{x:Static game:GameStatus.Won}">
-              <Setter Property="Visibility" Value="Visible" />
-              <Setter Property="Text" Value="Você venceu!" />
-              <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Status}" Value="{x:Static game:GameStatus.Lost}">
-              <Setter Property="Visibility" Value="Visible" />
-              <Setter Property="Text" Value="Você perdeu." />
-              <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </TextBlock.Style>
-    </TextBlock>
+    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+      <StackPanel Orientation="Horizontal">
+        <StackPanel.Style>
+          <Style TargetType="StackPanel">
+            <Setter Property="ToolTip" Value="Tempo" />
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding HasTimeLimit}" Value="True">
+                <Setter Property="ToolTip" Value="Tempo restante" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </StackPanel.Style>
+        <Image Source="{StaticResource StopwatchEmoji}" Style="{StaticResource EmojiImageStyle}" Width="24" Height="24" />
+        <TextBlock Text="{Binding TimeText}" Margin="6,0,0,0" FontSize="16" FontWeight="Bold"
+                   VerticalAlignment="Center" />
+      </StackPanel>
+
+      <Button Command="{Binding OpenSettingsCommand}" ToolTip="Configurações" Margin="12,0,0,0"
+              Style="{StaticResource ButtonIcon}"
+              Foreground="{DynamicResource SecondaryTextBrush}"
+              hc:IconElement.Geometry="{StaticResource GearGeometry}"
+              hc:IconElement.Width="18" />
+    </StackPanel>
   </Grid>
 </UserControl>

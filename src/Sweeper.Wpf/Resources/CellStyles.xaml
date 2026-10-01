@@ -47,18 +47,15 @@
     </Style.Triggers>
   </Style>
 
-  <Style x:Key="CellIconStyle" TargetType="Path">
-    <Setter Property="Width" Value="16" />
-    <Setter Property="Height" Value="16" />
+  <Style x:Key="CellFlagStyle" TargetType="Path">
+    <Setter Property="Data" Value="{StaticResource FlagGeometry}" />
+    <Setter Property="Fill" Value="{DynamicResource DangerBrush}" />
+    <Setter Property="Width" Value="14" />
+    <Setter Property="Height" Value="14" />
     <Setter Property="Stretch" Value="Uniform" />
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
     <Setter Property="Visibility" Value="Collapsed" />
-  </Style>
-
-  <Style x:Key="CellFlagStyle" TargetType="Path" BasedOn="{StaticResource CellIconStyle}">
-    <Setter Property="Data" Value="{StaticResource FlagGeometry}" />
-    <Setter Property="Fill" Value="{DynamicResource DangerBrush}" />
     <Style.Triggers>
       <DataTrigger Binding="{Binding State}" Value="{x:Static shared:CellState.Flagged}">
         <Setter Property="Visibility" Value="Visible" />
@@ -66,10 +63,12 @@
     </Style.Triggers>
   </Style>
 
-  <!-- Mina fechada no fim do jogo, ou a que explodiu (branca no fundo vermelho). -->
-  <Style x:Key="CellMineStyle" TargetType="Path" BasedOn="{StaticResource CellIconStyle}">
-    <Setter Property="Data" Value="{StaticResource MineGeometry}" />
-    <Setter Property="Fill" Value="{DynamicResource PrimaryTextBrush}" />
+  <!-- Bomba nas minas fechadas no fim do jogo; explosão na que foi clicada. -->
+  <Style x:Key="CellMineStyle" TargetType="Image" BasedOn="{StaticResource EmojiImageStyle}">
+    <Setter Property="Source" Value="{StaticResource BombEmoji}" />
+    <Setter Property="Width" Value="20" />
+    <Setter Property="Height" Value="20" />
+    <Setter Property="Visibility" Value="Collapsed" />
     <Style.Triggers>
       <MultiDataTrigger>
         <MultiDataTrigger.Conditions>
@@ -80,7 +79,9 @@
       </MultiDataTrigger>
       <DataTrigger Binding="{Binding IsExploded}" Value="True">
         <Setter Property="Visibility" Value="Visible" />
-        <Setter Property="Fill" Value="{DynamicResource TextIconBrush}" />
+        <Setter Property="Source" Value="{StaticResource CollisionEmoji}" />
+        <Setter Property="Width" Value="24" />
+        <Setter Property="Height" Value="24" />
       </DataTrigger>
     </Style.Triggers>
   </Style>
