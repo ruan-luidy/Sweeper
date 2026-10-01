@@ -1,0 +1,21 @@
+<!-- CanMinimize: redimensionar na mão desligaria o SizeToContent nos jogos seguintes. -->
+<hc:Window x:Class="Sweeper.Wpf.MainWindow"
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+           xmlns:hc="https://handyorg.github.io/handycontrol"
+           xmlns:board="clr-namespace:Sweeper.Wpf.Features.Board"
+           xmlns:game="clr-namespace:Sweeper.Wpf.Features.Game"
+           Title="Sweeper"
+           WindowStartupLocation="CenterScreen"
+           SizeToContent="WidthAndHeight"
+           ResizeMode="CanMinimize"
+           MaxWidth="{x:Static SystemParameters.MaximizedPrimaryScreenWidth}"
+           MaxHeight="{x:Static SystemParameters.MaximizedPrimaryScreenHeight}">
+  <DockPanel Margin="16">
+    <game:GameHeaderView DockPanel.Dock="Top" Margin="0,0,0,12" />
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+      <board:BoardView HorizontalAlignment="Center" />
+    </ScrollViewer>
+  </DockPanel>
+</hc:Window>
