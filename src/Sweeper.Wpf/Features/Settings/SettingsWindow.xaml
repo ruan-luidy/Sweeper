@@ -3,54 +3,119 @@
            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
            xmlns:hc="https://handyorg.github.io/handycontrol"
            Title="Configurações"
-           Width="340"
+           Background="{DynamicResource SecondaryRegionBrush}"
+           Width="420"
            SizeToContent="Height"
            ResizeMode="NoResize"
            ShowInTaskbar="False"
            WindowStartupLocation="CenterOwner">
-  <StackPanel Margin="16">
+  <hc:Window.Resources>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
-    <ComboBox ItemsSource="{Binding Options}"
-              SelectedItem="{Binding SelectedOption}"
-              DisplayMemberPath="Name"
-              Style="{StaticResource ComboBoxExtend}"
-              hc:InfoElement.Title="Dificuldade"
-              hc:InfoElement.TitlePlacement="Left"
-              hc:InfoElement.TitleWidth="110" />
+    <Style x:Key="CardStyle" TargetType="Border" BasedOn="{StaticResource BorderRegion}">
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="16" />
+      <Setter Property="Effect" Value="{StaticResource EffectShadow2}" />
+    </Style>
 
-    <!-- Os limites aqui são só conforto; quem valida é o GameSettings. -->
-    <hc:NumericUpDown Value="{Binding BoardWidth}" Minimum="5" Maximum="50" DecimalPlaces="0"
-                      IsEnabled="{Binding IsCustom}"
-                      Style="{StaticResource NumericUpDownExtend}" Margin="0,10,0,0"
-                      hc:InfoElement.Title="Largura"
-                      hc:InfoElement.TitlePlacement="Left"
-                      hc:InfoElement.TitleWidth="110" />
+    <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+    </Style>
 
-    <hc:NumericUpDown Value="{Binding BoardHeight}" Minimum="5" Maximum="50" DecimalPlaces="0"
-                      IsEnabled="{Binding IsCustom}"
-                      Style="{StaticResource NumericUpDownExtend}" Margin="0,10,0,0"
-                      hc:InfoElement.Title="Altura"
-                      hc:InfoElement.TitlePlacement="Left"
-                      hc:InfoElement.TitleWidth="110" />
+    <!-- Cada dificuldade é um cartão; o selecionado ganha a borda e o fundo claro do PrimaryBrush. -->
+    <Style x:Key="DifficultyItemStyle" TargetType="ListBoxItem">
+      <Setter Property="Margin" Value="4" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ListBoxItem">
+            <Border x:Name="Card" Padding="12,10" CornerRadius="8" BorderThickness="1.5"
+                    Background="{DynamicResource SecondaryRegionBrush}"
+                    BorderBrush="{DynamicResource SecondaryRegionBrush}">
+              <StackPanel>
+                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}" />
+                <TextBlock Text="{Binding Description}" Margin="0,2,0,0" FontSize="12"
+                           Foreground="{DynamicResource SecondaryTextBrush}" TextTrimming="CharacterEllipsis" />
+              </StackPanel>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Card" Property="Background" Value="{DynamicResource BorderBrush}" />
+                <Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+              </Trigger>
+              <Trigger Property="IsSelected" Value="True">
+                <Setter TargetName="Card" Property="Background" Value="{DynamicResource LightPrimaryBrush}" />
+                <Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </hc:Window.Resources>
 
-    <hc:NumericUpDown Value="{Binding MineCount}" Minimum="1" Maximum="2491" DecimalPlaces="0"
-                      IsEnabled="{Binding IsCustom}"
-                      Style="{StaticResource NumericUpDownExtend}" Margin="0,10,0,0"
-                      hc:InfoElement.Title="Minas"
-                      hc:InfoElement.TitlePlacement="Left"
-                      hc:InfoElement.TitleWidth="110" />
+  <StackPanel Margin="20">
 
-    <CheckBox Content="Limite de tempo" IsChecked="{Binding HasTimeLimit}" Margin="0,16,0,0" />
+    <Border Style="{StaticResource CardStyle}">
+      <StackPanel>
+        <TextBlock Text="Dificuldade" Style="{StaticResource SectionTitleStyle}" Margin="0,0,0,8" />
 
-    <hc:NumericUpDown Value="{Binding TimeLimitMinutes}" Minimum="1" Maximum="999" DecimalPlaces="0"
-                      IsEnabled="{Binding HasTimeLimit}"
-                      Style="{StaticResource NumericUpDownExtend}" Margin="0,10,0,0"
-                      hc:InfoElement.Title="Minutos"
-                      hc:InfoElement.TitlePlacement="Left"
-                      hc:InfoElement.TitleWidth="110" />
+        <ListBox ItemsSource="{Binding Options}" SelectedItem="{Binding SelectedOption}"
+                 ItemContainerStyle="{StaticResource DifficultyItemStyle}"
+                 Background="Transparent" BorderThickness="0" Padding="0" Margin="-4,0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
+          <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+              <UniformGrid Columns="2" />
+            </ItemsPanelTemplate>
+          </ListBox.ItemsPanel>
+        </ListBox>
+
+        <!-- Os campos só aparecem no personalizado. Os limites aqui são conforto; quem valida é o GameSettings. -->
+        <Grid Margin="0,12,0,0" Visibility="{Binding IsCustom, Converter={StaticResource BooleanToVisibilityConverter}}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+
+          <hc:NumericUpDown Grid.Column="0" Value="{Binding BoardWidth}" Minimum="5" Maximum="50" DecimalPlaces="0"
+                            Style="{StaticResource NumericUpDownExtend}" hc:InfoElement.Title="Largura" />
+          <hc:NumericUpDown Grid.Column="2" Value="{Binding BoardHeight}" Minimum="5" Maximum="50" DecimalPlaces="0"
+                            Style="{StaticResource NumericUpDownExtend}" hc:InfoElement.Title="Altura" />
+          <hc:NumericUpDown Grid.Column="4" Value="{Binding MineCount}" Minimum="1" Maximum="2491" DecimalPlaces="0"
+                            Style="{StaticResource NumericUpDownExtend}" hc:InfoElement.Title="Minas" />
+        </Grid>
+      </StackPanel>
+    </Border>
+
+    <Border Style="{StaticResource CardStyle}" Margin="0,16,0,0">
+      <StackPanel>
+        <DockPanel>
+          <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding HasTimeLimit}"
+                        Style="{StaticResource ToggleButtonSwitch}" VerticalAlignment="Center" />
+          <StackPanel>
+            <TextBlock Text="Limite de tempo" Style="{StaticResource SectionTitleStyle}" />
+            <TextBlock Text="Perde a partida quando o tempo acaba" Margin="0,2,0,0" FontSize="12"
+                       Foreground="{DynamicResource SecondaryTextBrush}" />
+          </StackPanel>
+        </DockPanel>
+
+        <hc:NumericUpDown Value="{Binding TimeLimitMinutes}" Minimum="1" Maximum="999" DecimalPlaces="0"
+                          Margin="0,12,0,0"
+                          Visibility="{Binding HasTimeLimit, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          Style="{StaticResource NumericUpDownExtend}"
+                          hc:InfoElement.Title="Minutos" />
+      </StackPanel>
+    </Border>
 
     <TextBlock Text="{Binding ErrorText}" Foreground="{DynamicResource DangerBrush}"
-               TextWrapping="Wrap" Margin="0,12,0,0">
+               TextWrapping="Wrap" Margin="4,12,4,0">
       <TextBlock.Style>
         <Style TargetType="TextBlock">
           <Style.Triggers>
@@ -62,9 +127,10 @@
       </TextBlock.Style>
     </TextBlock>
 
+    <!-- IsDefault: Enter salva. IsCancel: Esc fecha sem salvar, sem código nenhum. -->
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-      <Button Content="Cancelar" IsCancel="True" />
-      <Button Content="Salvar" Command="{Binding SaveCommand}" IsDefault="True"
+      <Button Content="Cancelar" IsCancel="True" Width="96" />
+      <Button Content="Salvar" Command="{Binding SaveCommand}" IsDefault="True" Width="96"
               Style="{StaticResource ButtonPrimary}" Margin="8,0,0,0" />
     </StackPanel>
 

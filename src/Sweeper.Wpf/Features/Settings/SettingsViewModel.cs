@@ -7,7 +7,12 @@ namespace Sweeper.Wpf.Features.Settings;
 public sealed partial class SettingsViewModel : ObservableObject
 {
   // Preset null = personalizado.
-  public sealed record DifficultyOption(string Name, GameSettings? Preset);
+  public sealed record DifficultyOption(string Name, GameSettings? Preset)
+  {
+    public string Description => Preset is { } preset
+      ? $"{preset.Width} × {preset.Height} · {preset.MineCount} minas"
+      : "Você escolhe";
+  }
 
   private static readonly DifficultyOption CustomOption = new("Personalizado", null);
 
