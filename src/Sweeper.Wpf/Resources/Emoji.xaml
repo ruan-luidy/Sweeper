@@ -6,7 +6,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
   <BitmapImage x:Key="BombEmoji" UriSource="pack://application:,,,/Sweeper.Wpf;component/Resources/Emoji/bomb.png" DecodePixelWidth="64" />
-  <BitmapImage x:Key="CollisionEmoji" UriSource="pack://application:,,,/Sweeper.Wpf;component/Resources/Emoji/collision.png" DecodePixelWidth="64" />
   <BitmapImage x:Key="StopwatchEmoji" UriSource="pack://application:,,,/Sweeper.Wpf;component/Resources/Emoji/stopwatch.png" DecodePixelWidth="64" />
 
   <BitmapImage x:Key="FaceHappyEmoji" UriSource="pack://application:,,,/Sweeper.Wpf;component/Resources/Emoji/face-happy.png" DecodePixelWidth="96" />

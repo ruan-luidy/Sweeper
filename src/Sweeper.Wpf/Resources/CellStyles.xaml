@@ -8,20 +8,22 @@
 
   <!-- Border em vez de Button: bem mais leve com até 2500 células. -->
   <Style x:Key="CellBorderStyle" TargetType="Border">
-    <Setter Property="Width" Value="28" />
-    <Setter Property="Height" Value="28" />
-    <Setter Property="Margin" Value="1" />
-    <Setter Property="CornerRadius" Value="2" />
+    <Setter Property="Width" Value="36" />
+    <Setter Property="Height" Value="36" />
+    <Setter Property="Margin" Value="2" />
+    <Setter Property="CornerRadius" Value="4" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
     <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
     <Style.Triggers>
+      <!-- Hover pinta a célula inteira, não só o contorno. -->
       <MultiDataTrigger>
         <MultiDataTrigger.Conditions>
           <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
           <Condition Binding="{Binding State}" Value="{x:Static shared:CellState.Hidden}" />
         </MultiDataTrigger.Conditions>
-        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="Background" Value="{DynamicResource LightPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LightPrimaryBrush}" />
       </MultiDataTrigger>
       <DataTrigger Binding="{Binding State}" Value="{x:Static shared:CellState.Revealed}">
         <Setter Property="Background" Value="{DynamicResource RegionBrush}" />
@@ -36,7 +38,7 @@
   <Style x:Key="CellNumberStyle" TargetType="TextBlock">
     <Setter Property="Text" Value="{Binding AdjacentMines}" />
     <Setter Property="Foreground" Value="{Binding AdjacentMines, Converter={StaticResource NumberToBrushConverter}}" />
-    <Setter Property="FontSize" Value="15" />
+    <Setter Property="FontSize" Value="18" />
     <Setter Property="FontWeight" Value="Bold" />
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
@@ -50,8 +52,8 @@
   <Style x:Key="CellFlagStyle" TargetType="Path">
     <Setter Property="Data" Value="{StaticResource FlagGeometry}" />
     <Setter Property="Fill" Value="{DynamicResource DangerBrush}" />
-    <Setter Property="Width" Value="14" />
-    <Setter Property="Height" Value="14" />
+    <Setter Property="Width" Value="18" />
+    <Setter Property="Height" Value="18" />
     <Setter Property="Stretch" Value="Uniform" />
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
@@ -63,11 +65,11 @@
     </Style.Triggers>
   </Style>
 
-  <!-- Bomba nas minas fechadas no fim do jogo; explosão na que foi clicada. -->
+  <!-- Bomba nas minas fechadas no fim do jogo e na que foi clicada (que ganha o fundo vermelho). -->
   <Style x:Key="CellMineStyle" TargetType="Image" BasedOn="{StaticResource EmojiImageStyle}">
     <Setter Property="Source" Value="{StaticResource BombEmoji}" />
-    <Setter Property="Width" Value="20" />
-    <Setter Property="Height" Value="20" />
+    <Setter Property="Width" Value="18" />
+    <Setter Property="Height" Value="18" />
     <Setter Property="Visibility" Value="Collapsed" />
     <Style.Triggers>
       <MultiDataTrigger>
@@ -79,9 +81,6 @@
       </MultiDataTrigger>
       <DataTrigger Binding="{Binding IsExploded}" Value="True">
         <Setter Property="Visibility" Value="Visible" />
-        <Setter Property="Source" Value="{StaticResource CollisionEmoji}" />
-        <Setter Property="Width" Value="24" />
-        <Setter Property="Height" Value="24" />
       </DataTrigger>
     </Style.Triggers>
   </Style>

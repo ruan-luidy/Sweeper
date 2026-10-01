@@ -12,14 +12,14 @@
     </Grid.ColumnDefinitions>
 
     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" ToolTip="Minas restantes">
-      <Image Source="{StaticResource BombEmoji}" Style="{StaticResource EmojiImageStyle}" Width="24" Height="24" />
-      <TextBlock Text="{Binding MinesRemaining}" Margin="6,0,0,0" FontSize="16" FontWeight="Bold"
+      <Image Source="{StaticResource BombEmoji}" Style="{StaticResource EmojiImageStyle}" Width="28" Height="28" />
+      <TextBlock Text="{Binding MinesRemaining}" Margin="8,0,0,0" FontSize="20" FontWeight="Bold"
                  VerticalAlignment="Center" />
     </StackPanel>
 
-    <!-- Novo jogo, no estilo do Campo Minado clássico: a carinha é o botão. -->
-    <Button Grid.Column="1" Command="{Binding NewGameCommand}" ToolTip="Novo jogo"
-            Width="48" Height="48" Padding="4" Margin="12,0">
+    <!-- Novo jogo, no estilo do Campo Minado clássico: a carinha é o botão. Focusable False tira o contorno tracejado de foco. -->
+    <Button Grid.Column="1" Command="{Binding NewGameCommand}" ToolTip="Novo jogo" Focusable="False"
+            Width="52" Height="52" Padding="8" Margin="16,0">
       <Image>
         <Image.Style>
           <Style TargetType="Image" BasedOn="{StaticResource EmojiImageStyle}">
@@ -55,16 +55,16 @@
             </Style.Triggers>
           </Style>
         </StackPanel.Style>
-        <Image Source="{StaticResource StopwatchEmoji}" Style="{StaticResource EmojiImageStyle}" Width="24" Height="24" />
-        <TextBlock Text="{Binding TimeText}" Margin="6,0,0,0" FontSize="16" FontWeight="Bold"
+        <Image Source="{StaticResource StopwatchEmoji}" Style="{StaticResource EmojiImageStyle}" Width="28" Height="28" />
+        <TextBlock Text="{Binding TimeText}" Margin="8,0,0,0" FontSize="20" FontWeight="Bold"
                    VerticalAlignment="Center" />
       </StackPanel>
 
-      <Button Command="{Binding OpenSettingsCommand}" ToolTip="Configurações" Margin="12,0,0,0"
+      <Button Command="{Binding OpenSettingsCommand}" ToolTip="Configurações" Focusable="False" Margin="16,0,0,0"
               Style="{StaticResource ButtonIcon}"
               Foreground="{DynamicResource SecondaryTextBrush}"
               hc:IconElement.Geometry="{StaticResource GearGeometry}"
-              hc:IconElement.Width="18" />
+              hc:IconElement.Width="20" />
     </StackPanel>
   </Grid>
 </UserControl>
