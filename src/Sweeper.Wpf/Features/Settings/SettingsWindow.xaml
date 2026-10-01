@@ -1,0 +1,72 @@
+<hc:Window x:Class="Sweeper.Wpf.Features.Settings.SettingsWindow"
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+           xmlns:hc="https://handyorg.github.io/handycontrol"
+           Title="Configurações"
+           Width="340"
+           SizeToContent="Height"
+           ResizeMode="NoResize"
+           ShowInTaskbar="False"
+           WindowStartupLocation="CenterOwner">
+  <StackPanel Margin="16">
+
+    <ComboBox ItemsSource="{Binding Options}"
+              SelectedItem="{Binding SelectedOption}"
+              DisplayMemberPath="Name"
+              Style="{StaticResource ComboBoxExtend}"
+              hc:InfoElement.Title="Dificuldade"
+              hc:InfoElement.TitlePlacement="Left"
+              hc:InfoElement.TitleWidth="110" />
+
+    <!-- Os limites aqui são só conforto; quem valida é o GameSettings. -->
+    <hc:NumericUpDown Value="{Binding BoardWidth}" Minimum="5" Maximum="50" DecimalPlaces="0"
+                      IsEnabled="{Binding IsCustom}"
+                      Style="{StaticResource NumericUpDownExtend}" Margin="0,10,0,0"
+                      hc:InfoElement.Title="Largura"
+                      hc:InfoElement.TitlePlacement="Left"
+                      hc:InfoElement.TitleWidth="110" />
+
+    <hc:NumericUpDown Value="{Binding BoardHeight}" Minimum="5" Maximum="50" DecimalPlaces="0"
+                      IsEnabled="{Binding IsCustom}"
+                      Style="{StaticResource NumericUpDownExtend}" Margin="0,10,0,0"
+                      hc:InfoElement.Title="Altura"
+                      hc:InfoElement.TitlePlacement="Left"
+                      hc:InfoElement.TitleWidth="110" />
+
+    <hc:NumericUpDown Value="{Binding MineCount}" Minimum="1" Maximum="2491" DecimalPlaces="0"
+                      IsEnabled="{Binding IsCustom}"
+                      Style="{StaticResource NumericUpDownExtend}" Margin="0,10,0,0"
+                      hc:InfoElement.Title="Minas"
+                      hc:InfoElement.TitlePlacement="Left"
+                      hc:InfoElement.TitleWidth="110" />
+
+    <CheckBox Content="Limite de tempo" IsChecked="{Binding HasTimeLimit}" Margin="0,16,0,0" />
+
+    <hc:NumericUpDown Value="{Binding TimeLimitMinutes}" Minimum="1" Maximum="999" DecimalPlaces="0"
+                      IsEnabled="{Binding HasTimeLimit}"
+                      Style="{StaticResource NumericUpDownExtend}" Margin="0,10,0,0"
+                      hc:InfoElement.Title="Minutos"
+                      hc:InfoElement.TitlePlacement="Left"
+                      hc:InfoElement.TitleWidth="110" />
+
+    <TextBlock Text="{Binding ErrorText}" Foreground="{DynamicResource DangerBrush}"
+               TextWrapping="Wrap" Margin="0,12,0,0">
+      <TextBlock.Style>
+        <Style TargetType="TextBlock">
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding ErrorText}" Value="">
+              <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </TextBlock.Style>
+    </TextBlock>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+      <Button Content="Cancelar" IsCancel="True" />
+      <Button Content="Salvar" Command="{Binding SaveCommand}" IsDefault="True"
+              Style="{StaticResource ButtonPrimary}" Margin="8,0,0,0" />
+    </StackPanel>
+
+  </StackPanel>
+</hc:Window>
