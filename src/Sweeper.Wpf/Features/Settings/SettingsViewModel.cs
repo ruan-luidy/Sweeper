@@ -39,6 +39,8 @@ public sealed partial class SettingsViewModel : ObservableObject
 
   public event Action<GameSettings>? Saved;
 
+  public event Action? Cancelled;
+
   public IReadOnlyList<DifficultyOption> Options { get; }
 
   public bool IsCustom => SelectedOption.Preset is null;
@@ -91,6 +93,9 @@ public sealed partial class SettingsViewModel : ObservableObject
   private void Save() => Saved?.Invoke(BuildSettings());
 
   private bool CanSave() => ErrorText.Length == 0;
+
+  [RelayCommand]
+  private void Cancel() => Cancelled?.Invoke();
 
   private GameSettings BuildSettings() => new(
     BoardWidth,

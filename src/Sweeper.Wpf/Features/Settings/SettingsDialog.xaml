@@ -1,22 +1,17 @@
-<hc:Window x:Class="Sweeper.Wpf.Features.Settings.SettingsWindow"
-           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-           xmlns:hc="https://handyorg.github.io/handycontrol"
-           Title="Configurações"
-           Background="{DynamicResource SecondaryRegionBrush}"
-           Width="420"
-           SizeToContent="Height"
-           ResizeMode="NoResize"
-           ShowInTaskbar="False"
-           WindowStartupLocation="CenterOwner">
-  <hc:Window.Resources>
-    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+<!-- Abre com hc:Dialog, por cima da janela principal. Cartão com cabeçalho, corpo e rodapé cinza. -->
+<UserControl x:Class="Sweeper.Wpf.Features.Settings.SettingsDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             Width="384">
+  <!-- Dentro do hc:Dialog não tem IsDefault/IsCancel (não é janela), então Enter e Esc vão por KeyBinding. -->
+  <UserControl.InputBindings>
+    <KeyBinding Key="Enter" Command="{Binding SaveCommand}" />
+    <KeyBinding Key="Escape" Command="{Binding CancelCommand}" />
+  </UserControl.InputBindings>
 
-    <Style x:Key="CardStyle" TargetType="Border" BasedOn="{StaticResource BorderRegion}">
-      <Setter Property="CornerRadius" Value="10" />
-      <Setter Property="Padding" Value="16" />
-      <Setter Property="Effect" Value="{StaticResource EffectShadow2}" />
-    </Style>
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
     <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
       <Setter Property="FontSize" Value="14" />
@@ -31,7 +26,7 @@
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="ListBoxItem">
-            <Border x:Name="Card" Padding="12,10" CornerRadius="8" BorderThickness="1.5"
+            <Border x:Name="Card" Padding="10,8" CornerRadius="8" BorderThickness="1.5"
                     Background="{DynamicResource SecondaryRegionBrush}"
                     BorderBrush="{DynamicResource SecondaryRegionBrush}">
               <StackPanel>
@@ -54,12 +49,35 @@
         </Setter.Value>
       </Setter>
     </Style>
-  </hc:Window.Resources>
+  </UserControl.Resources>
 
-  <StackPanel Margin="20">
+  <Border Background="{DynamicResource RegionBrush}" BorderBrush="{DynamicResource BorderBrush}"
+          BorderThickness="1" CornerRadius="10" Effect="{StaticResource EffectShadow3}">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
 
-    <Border Style="{StaticResource CardStyle}">
-      <StackPanel>
+      <!-- Cabeçalho -->
+      <Border Grid.Row="0" Padding="16,10" Background="{DynamicResource SecondaryRegionBrush}"
+              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" CornerRadius="9,9,0,0">
+        <DockPanel>
+          <Button DockPanel.Dock="Right" VerticalAlignment="Top" Command="{Binding CancelCommand}"
+                  ToolTip="Fechar" Focusable="False"
+                  Style="{StaticResource ButtonIcon}" Padding="6"
+                  Foreground="{DynamicResource SecondaryTextBrush}"
+                  hc:IconElement.Geometry="{StaticResource CloseGeometry}"
+                  hc:IconElement.Width="12" />
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="Configurações" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}" />
+          </StackPanel>
+        </DockPanel>
+      </Border>
+
+      <!-- Corpo -->
+      <StackPanel Grid.Row="1" Margin="16,12">
         <TextBlock Text="Dificuldade" Style="{StaticResource SectionTitleStyle}" Margin="0,0,0,8" />
 
         <ListBox ItemsSource="{Binding Options}" SelectedItem="{Binding SelectedOption}"
@@ -75,7 +93,7 @@
         </ListBox>
 
         <!-- Os campos só aparecem no personalizado. Os limites aqui são conforto; quem valida é o GameSettings. -->
-        <Grid Margin="0,12,0,0" Visibility="{Binding IsCustom, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Margin="0,8,0,0" Visibility="{Binding IsCustom, Converter={StaticResource BooleanToVisibilityConverter}}">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="12" />
@@ -91,11 +109,9 @@
           <hc:NumericUpDown Grid.Column="4" Value="{Binding MineCount}" Minimum="1" Maximum="2491" DecimalPlaces="0"
                             Style="{StaticResource NumericUpDownExtend}" hc:InfoElement.Title="Minas" />
         </Grid>
-      </StackPanel>
-    </Border>
 
-    <Border Style="{StaticResource CardStyle}" Margin="0,16,0,0">
-      <StackPanel>
+        <Border Height="1" Margin="0,14,0,12" Background="{DynamicResource BorderBrush}" />
+
         <DockPanel>
           <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding HasTimeLimit}"
                         Style="{StaticResource ToggleButtonSwitch}" VerticalAlignment="Center" />
@@ -107,32 +123,34 @@
         </DockPanel>
 
         <hc:NumericUpDown Value="{Binding TimeLimitMinutes}" Minimum="1" Maximum="999" DecimalPlaces="0"
-                          Margin="0,12,0,0"
+                          Margin="0,8,0,0"
                           Visibility="{Binding HasTimeLimit, Converter={StaticResource BooleanToVisibilityConverter}}"
                           Style="{StaticResource NumericUpDownExtend}"
                           hc:InfoElement.Title="Minutos" />
+
+        <TextBlock Text="{Binding ErrorText}" Foreground="{DynamicResource DangerBrush}"
+                   TextWrapping="Wrap" Margin="0,12,0,0">
+          <TextBlock.Style>
+            <Style TargetType="TextBlock">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding ErrorText}" Value="">
+                  <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </TextBlock.Style>
+        </TextBlock>
       </StackPanel>
-    </Border>
 
-    <TextBlock Text="{Binding ErrorText}" Foreground="{DynamicResource DangerBrush}"
-               TextWrapping="Wrap" Margin="4,12,4,0">
-      <TextBlock.Style>
-        <Style TargetType="TextBlock">
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding ErrorText}" Value="">
-              <Setter Property="Visibility" Value="Collapsed" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </TextBlock.Style>
-    </TextBlock>
-
-    <!-- IsDefault: Enter salva. IsCancel: Esc fecha sem salvar, sem código nenhum. -->
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-      <Button Content="Cancelar" IsCancel="True" Width="96" />
-      <Button Content="Salvar" Command="{Binding SaveCommand}" IsDefault="True" Width="96"
-              Style="{StaticResource ButtonPrimary}" Margin="8,0,0,0" />
-    </StackPanel>
-
-  </StackPanel>
-</hc:Window>
+      <!-- Rodapé -->
+      <Border Grid.Row="2" Padding="16,10" Background="{DynamicResource SecondaryRegionBrush}"
+              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" CornerRadius="0,0,9,9">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+          <Button Content="Cancelar" Command="{Binding CancelCommand}" Width="96" />
+          <Button Content="Salvar" Command="{Binding SaveCommand}" Width="96"
+                  Style="{StaticResource ButtonPrimary}" Margin="8,0,0,0" />
+        </StackPanel>
+      </Border>
+    </Grid>
+  </Border>
+</UserControl>

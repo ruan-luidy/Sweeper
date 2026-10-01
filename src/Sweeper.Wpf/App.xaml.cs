@@ -9,12 +9,12 @@ public partial class App : Application
   {
     base.OnStartup(e);
 
-    // O ViewModel recebe a tela de configurações como função, sem conhecer a janela.
+    // O ViewModel recebe a tela de configurações como função, sem conhecer o diálogo.
     var window = new MainWindow();
     window.DataContext = new MainViewModel(
       TimeProvider.System,
       Random.Shared,
-      current => SettingsWindow.Edit(window, current));
+      SettingsDialog.EditAsync);
 
     window.Show();
   }

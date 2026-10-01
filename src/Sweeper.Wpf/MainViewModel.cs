@@ -16,7 +16,7 @@ public sealed partial class MainViewModel : ObservableObject
 
   private readonly TimeProvider _timeProvider;
   private readonly Random _random;
-  private readonly Func<GameSettings, GameSettings?> _editSettings;
+  private readonly Func<GameSettings, Task<GameSettings?>> _editSettings;
   private readonly DispatcherTimer _timer;
 
   private GameSettings _settings = Difficulty.Beginner;
@@ -24,7 +24,7 @@ public sealed partial class MainViewModel : ObservableObject
   private bool _isPressing;
 
   // editSettings devolve null quando o usuário cancela.
-  public MainViewModel(TimeProvider timeProvider, Random random, Func<GameSettings, GameSettings?> editSettings)
+  public MainViewModel(TimeProvider timeProvider, Random random, Func<GameSettings, Task<GameSettings?>> editSettings)
   {
     _timeProvider = timeProvider;
     _random = random;
@@ -69,10 +69,11 @@ public sealed partial class MainViewModel : ObservableObject
   [RelayCommand]
   private void NewGame() => StartGame(_settings);
 
+  // Assíncrono porque o diálogo abre por cima da janela sem bloquear; o comando fica desabilitado até ele fechar.
   [RelayCommand]
-  private void OpenSettings()
+  private async Task OpenSettings()
   {
-    var settings = _editSettings(_settings);
+    var settings = await _editSettings(_settings);
     if (settings is null)
     {
       return;
