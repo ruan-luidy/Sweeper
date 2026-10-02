@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
@@ -78,17 +79,23 @@ public sealed class CoopConnection : IDisposable
   }
 
   // IPs desta máquina na rede local, pra mostrar pro host passar pro parceiro.
+  // Placa com gateway primeiro: é a do roteador; as virtuais (VirtualBox, Hyper-V, WSL) não têm.
   public static IReadOnlyList<string> GetLocalAddresses()
   {
     try
     {
-      return Dns.GetHostAddresses(Dns.GetHostName())
-        .Where(address => address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(address))
-        .Select(address => address.ToString())
+      return NetworkInterface.GetAllNetworkInterfaces()
+        .Where(network => network.OperationalStatus == OperationalStatus.Up &&
+                          network.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+        .Select(network => network.GetIPProperties())
+        .OrderByDescending(properties => properties.GatewayAddresses.Any(gateway => !gateway.Address.Equals(IPAddress.Any)))
+        .SelectMany(properties => properties.UnicastAddresses)
+        .Where(unicast => unicast.Address.AddressFamily == AddressFamily.InterNetwork)
+        .Select(unicast => unicast.Address.ToString())
         .Distinct()
         .ToList();
     }
-    catch (SocketException)
+    catch (NetworkInformationException)
     {
       return [];
     }

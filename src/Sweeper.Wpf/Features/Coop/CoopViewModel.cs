@@ -1,4 +1,6 @@
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Sweeper.Net.Features.Coop;
@@ -14,11 +16,16 @@ public sealed partial class CoopViewModel : ObservableObject
 
   public CoopViewModel()
   {
-    var addresses = CoopConnection.GetLocalAddresses();
-    LocalAddressText = addresses.Count > 0 ? string.Join("  ·  ", addresses) : "não encontrado";
+    LocalAddresses = CoopConnection.GetLocalAddresses();
   }
 
-  public string LocalAddressText { get; }
+  // O primeiro é o mais provável (placa com gateway); os outros ficam de reserva.
+  public IReadOnlyList<string> LocalAddresses { get; }
+
+  public bool HasLocalAddress => LocalAddresses.Count > 0;
+
+  [ObservableProperty]
+  public partial string CopiedText { get; private set; } = "";
 
   public int Port => CoopConnection.DefaultPort;
 
@@ -53,6 +60,21 @@ public sealed partial class CoopViewModel : ObservableObject
     token => CoopConnection.JoinAsync(HostAddress.Trim(), Port, token),
     isHost: false,
     JoinTimeout);
+
+  [RelayCommand]
+  private void CopyAddress(string address)
+  {
+    try
+    {
+      Clipboard.SetText(address);
+      CopiedText = $"{address} copiado, é só mandar pro parceiro.";
+    }
+    catch (COMException)
+    {
+      // Outro programa segurando a área de transferência; tenta de novo que costuma ir.
+      CopiedText = "Não deu pra copiar agora, tenta de novo.";
+    }
+  }
 
   [RelayCommand]
   private void Cancel()
