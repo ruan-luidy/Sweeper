@@ -60,7 +60,23 @@
                    VerticalAlignment="Center" />
       </StackPanel>
 
-      <Button Command="{Binding OpenSettingsCommand}" ToolTip="Configurações" Focusable="False" Margin="16,0,0,0"
+      <!-- Escondido durante o coop; pra sair tem o botão na faixa de baixo do cabeçalho. -->
+      <Button Command="{Binding OpenCoopCommand}" ToolTip="Coop na rede local" Focusable="False" Margin="16,0,0,0"
+              Foreground="{DynamicResource SecondaryTextBrush}"
+              hc:IconElement.Geometry="{StaticResource UsersGeometry}"
+              hc:IconElement.Width="20">
+        <Button.Style>
+          <Style TargetType="Button" BasedOn="{StaticResource ButtonIcon}">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding IsCoop}" Value="True">
+                <Setter Property="Visibility" Value="Collapsed" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </Button.Style>
+      </Button>
+
+      <Button Command="{Binding OpenSettingsCommand}" ToolTip="Configurações" Focusable="False" Margin="8,0,0,0"
               Style="{StaticResource ButtonIcon}"
               Foreground="{DynamicResource SecondaryTextBrush}"
               hc:IconElement.Geometry="{StaticResource GearGeometry}"

@@ -3,6 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:board="clr-namespace:Sweeper.Wpf.Features.Board">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+  </UserControl.Resources>
+
   <ItemsControl ItemsSource="{Binding Cells}" Focusable="False">
 
     <!-- Botão segurado no tabuleiro deixa a carinha nervosa. MouseLeave cobre soltar fora do tabuleiro. -->
@@ -53,6 +57,10 @@
             <Path Style="{StaticResource CellFlagStyle}" />
             <Image Style="{StaticResource CellMineStyle}" />
             <Path Style="{StaticResource CellWrongFlagStyle}" />
+            <!-- Contorno do mouse do parceiro no coop. Margin negativa cobre a borda da célula. -->
+            <Border Margin="-1" CornerRadius="6" BorderThickness="2" IsHitTestVisible="False"
+                    BorderBrush="{DynamicResource PrimaryBrush}"
+                    Visibility="{Binding IsPartnerHover, Converter={StaticResource BooleanToVisibilityConverter}}" />
           </Grid>
         </Border>
       </DataTemplate>

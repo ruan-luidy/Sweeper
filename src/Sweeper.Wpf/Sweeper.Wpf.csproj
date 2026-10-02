@@ -1,7 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\Sweeper.Core\Sweeper.Core.csproj" />
+    <ProjectReference Include="..\Sweeper.Net\Sweeper.Net.csproj" />
   </ItemGroup>
 
   <ItemGroup>

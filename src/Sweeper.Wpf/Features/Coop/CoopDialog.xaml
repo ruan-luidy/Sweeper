@@ -1,0 +1,118 @@
+<!-- Mesmo cartão do SettingsDialog: cabeçalho, corpo e rodapé cinza, aberto com hc:Dialog. -->
+<UserControl x:Class="Sweeper.Wpf.Features.Coop.CoopDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             Width="384">
+  <UserControl.InputBindings>
+    <KeyBinding Key="Escape" Command="{Binding CancelCommand}" />
+  </UserControl.InputBindings>
+
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+    <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+    </Style>
+
+    <Style x:Key="HintStyle" TargetType="TextBlock">
+      <Setter Property="Margin" Value="0,2,0,0" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
+    </Style>
+  </UserControl.Resources>
+
+  <Border Background="{DynamicResource RegionBrush}" BorderBrush="{DynamicResource BorderBrush}"
+          BorderThickness="1" CornerRadius="10" Effect="{StaticResource EffectShadow3}">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <!-- Cabeçalho -->
+      <Border Grid.Row="0" Padding="16,10" Background="{DynamicResource SecondaryRegionBrush}"
+              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" CornerRadius="9,9,0,0">
+        <DockPanel>
+          <Button DockPanel.Dock="Right" VerticalAlignment="Top" Command="{Binding CancelCommand}"
+                  ToolTip="Fechar" Focusable="False"
+                  Style="{StaticResource ButtonIcon}" Padding="6"
+                  Foreground="{DynamicResource SecondaryTextBrush}"
+                  hc:IconElement.Geometry="{StaticResource CloseGeometry}"
+                  hc:IconElement.Width="12" />
+          <TextBlock Text="Coop na rede local" VerticalAlignment="Center" FontSize="15" FontWeight="SemiBold"
+                     Foreground="{DynamicResource PrimaryTextBrush}" />
+        </DockPanel>
+      </Border>
+
+      <!-- Corpo -->
+      <StackPanel Grid.Row="1" Margin="16,12">
+        <DockPanel>
+          <Button DockPanel.Dock="Right" Content="Criar sala" Command="{Binding HostCommand}" Width="96"
+                  Style="{StaticResource ButtonPrimary}" VerticalAlignment="Center" Margin="12,0,0,0" />
+          <StackPanel>
+            <TextBlock Text="Hospedar" Style="{StaticResource SectionTitleStyle}" />
+            <TextBlock Style="{StaticResource HintStyle}">
+              <Run Text="Passa pro parceiro o seu IP:" />
+              <Run Text="{Binding LocalAddressText, Mode=OneWay}" FontWeight="SemiBold"
+                   Foreground="{DynamicResource PrimaryTextBrush}" />
+            </TextBlock>
+          </StackPanel>
+        </DockPanel>
+
+        <Border Height="1" Margin="0,14,0,12" Background="{DynamicResource BorderBrush}" />
+
+        <TextBlock Text="Entrar" Style="{StaticResource SectionTitleStyle}" />
+        <TextBlock Text="Digita o IP que aparece na tela do host." Style="{StaticResource HintStyle}" />
+
+        <DockPanel Margin="0,8,0,0">
+          <Button DockPanel.Dock="Right" Content="Entrar" Command="{Binding JoinCommand}" Width="96"
+                  Margin="12,0,0,0" />
+          <TextBox Text="{Binding HostAddress, UpdateSourceTrigger=PropertyChanged}"
+                   hc:InfoElement.Placeholder="192.168.0.10">
+            <TextBox.InputBindings>
+              <KeyBinding Key="Enter" Command="{Binding JoinCommand}" />
+            </TextBox.InputBindings>
+          </TextBox>
+        </DockPanel>
+
+        <!-- Esperando: o host fica aqui até o parceiro entrar; Cancelar para de esperar. -->
+        <StackPanel Orientation="Horizontal" Margin="0,14,0,0"
+                    Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}">
+          <hc:LoadingCircle Width="20" Height="20" DotDiameter="3" />
+          <TextBlock Text="{Binding StatusText}" Margin="8,0,0,0" VerticalAlignment="Center"
+                     Foreground="{DynamicResource SecondaryTextBrush}" />
+        </StackPanel>
+
+        <TextBlock Text="{Binding ErrorText}" Foreground="{DynamicResource DangerBrush}"
+                   TextWrapping="Wrap" Margin="0,12,0,0">
+          <TextBlock.Style>
+            <Style TargetType="TextBlock">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding ErrorText}" Value="">
+                  <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </TextBlock.Style>
+        </TextBlock>
+      </StackPanel>
+
+      <!-- Rodapé -->
+      <Border Grid.Row="2" Padding="16,10" Background="{DynamicResource SecondaryRegionBrush}"
+              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" CornerRadius="0,0,9,9">
+        <DockPanel>
+          <Button DockPanel.Dock="Right" Content="Cancelar" Command="{Binding CancelCommand}" Width="96" />
+          <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}">
+            <Run Text="Porta" />
+            <Run Text="{Binding Port, Mode=OneWay}" />
+          </TextBlock>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </Border>
+</UserControl>

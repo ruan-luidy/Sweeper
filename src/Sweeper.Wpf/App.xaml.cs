@@ -1,4 +1,6 @@
 using System.Windows;
+using HandyControl.Controls;
+using Sweeper.Wpf.Features.Coop;
 using Sweeper.Wpf.Features.Settings;
 
 namespace Sweeper.Wpf;
@@ -9,12 +11,14 @@ public partial class App : Application
   {
     base.OnStartup(e);
 
-    // O ViewModel recebe a tela de configurações como função, sem conhecer o diálogo.
+    // O ViewModel recebe os diálogos e o aviso como funções, sem conhecer as telas.
     var window = new MainWindow();
     window.DataContext = new MainViewModel(
       TimeProvider.System,
       Random.Shared,
-      SettingsDialog.EditAsync);
+      SettingsDialog.EditAsync,
+      CoopDialog.ConnectAsync,
+      message => Growl.InfoGlobal(message));
 
     window.Show();
   }

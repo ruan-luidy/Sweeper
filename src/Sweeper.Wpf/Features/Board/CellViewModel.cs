@@ -36,6 +36,10 @@ public sealed partial class CellViewModel : ObservableObject
   [ObservableProperty]
   public partial bool IsRangeCenter { get; set; }
 
+  // Célula sob o mouse do parceiro no coop.
+  [ObservableProperty]
+  public partial bool IsPartnerHover { get; set; }
+
   // Só passa pra UI o que o jogador pode ver: número só em célula aberta, mina só no fim do jogo.
   public void Update(Cell cell, bool isGameOver)
   {

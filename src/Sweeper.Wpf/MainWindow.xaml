@@ -13,6 +13,8 @@
            MaxWidth="{x:Static SystemParameters.MaximizedPrimaryScreenWidth}"
            MaxHeight="{x:Static SystemParameters.MaximizedPrimaryScreenHeight}">
   <hc:Window.Resources>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
     <!-- Cartão branco com a sombra do HandyControl; Margin deixa espaço pra sombra não ser cortada. -->
     <Style x:Key="CardStyle" TargetType="Border" BasedOn="{StaticResource BorderRegion}">
       <Setter Property="CornerRadius" Value="10" />
@@ -23,6 +25,20 @@
   <DockPanel Margin="20">
     <Border DockPanel.Dock="Top" Style="{StaticResource CardStyle}" Padding="16,10" Margin="0,0,0,16">
       <game:GameHeaderView />
+    </Border>
+
+    <!-- Faixa do coop: só aparece conectado. -->
+    <Border DockPanel.Dock="Top" Style="{StaticResource CardStyle}" Padding="16,6" Margin="0,0,0,16"
+            Background="{DynamicResource LightPrimaryBrush}"
+            Visibility="{Binding IsCoop, Converter={StaticResource BooleanToVisibilityConverter}}">
+      <DockPanel>
+        <Button DockPanel.Dock="Right" Content="Sair do coop" Command="{Binding LeaveCoopCommand}"
+                Focusable="False" Style="{StaticResource ButtonDefault.Small}" />
+        <Path Data="{StaticResource UsersGeometry}" Fill="{DynamicResource PrimaryBrush}" Width="16" Height="16"
+              Stretch="Uniform" VerticalAlignment="Center" />
+        <TextBlock Text="{Binding CoopText}" Margin="8,0,12,0" VerticalAlignment="Center"
+                   Foreground="{DynamicResource PrimaryTextBrush}" TextTrimming="CharacterEllipsis" />
+      </DockPanel>
     </Border>
 
     <Border Style="{StaticResource CardStyle}" Padding="12">
