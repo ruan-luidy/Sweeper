@@ -10,6 +10,9 @@ public sealed class CoopSession : IDisposable
   private readonly CoopConnection _connection;
   private int _round;
 
+  // Configurações da rodada atual, pra conferir as posições que chegam. null antes do primeiro Start.
+  private GameSettings? _settings;
+
   public CoopSession(CoopConnection connection, bool isHost)
   {
     _connection = connection;
@@ -53,6 +56,7 @@ public sealed class CoopSession : IDisposable
     settings = settings with { TimeLimit = null };
     var seed = Random.Shared.Next();
     _round++;
+    _settings = settings;
 
     _connection.Send(new CoopMessage(
       CoopMessageType.Start,
@@ -107,8 +111,7 @@ public sealed class CoopSession : IDisposable
     switch (message.Type)
     {
       case CoopMessageType.Start when !IsHost:
-        _round = message.Round;
-        GameStarted?.Invoke(new GameSettings(message.Width, message.Height, message.MineCount), message.Seed);
+        OnStartReceived(message);
         break;
 
       case CoopMessageType.Reveal or CoopMessageType.Flag when IsHost:
@@ -118,12 +121,24 @@ public sealed class CoopSession : IDisposable
           return;
         }
 
+        if (!IsOnBoard(message))
+        {
+          Fail();
+          return;
+        }
+
         // Devolve pro convidado na ordem em que o host aplicou.
         _connection.Send(message);
         MoveApplied?.Invoke(ToMove(message));
         break;
 
       case CoopMessageType.Reveal or CoopMessageType.Flag:
+        if (!IsOnBoard(message))
+        {
+          Fail();
+          return;
+        }
+
         MoveApplied?.Invoke(ToMove(message));
         break;
 
@@ -135,6 +150,34 @@ public sealed class CoopSession : IDisposable
         PartnerHovered?.Invoke(message.X >= 0 ? new GridPosition(message.X, message.Y) : null);
         break;
     }
+  }
+
+  private void OnStartReceived(CoopMessage message)
+  {
+    var settings = new GameSettings(message.Width, message.Height, message.MineCount);
+
+    // Sem isso o Game lançaria exceção na thread da UI e derrubaria o jogo.
+    if (!settings.IsValid)
+    {
+      Fail();
+      return;
+    }
+
+    _round = message.Round;
+    _settings = settings;
+    GameStarted?.Invoke(settings, message.Seed);
+  }
+
+  private bool IsOnBoard(CoopMessage message) =>
+    _settings is { } settings &&
+    message.X >= 0 && message.X < settings.Width &&
+    message.Y >= 0 && message.Y < settings.Height;
+
+  // Mensagem sem sentido (versão diferente ou parceiro bugado): encerra o coop, igual a JSON quebrado.
+  private void Fail()
+  {
+    _connection.Dispose();
+    Disconnected?.Invoke();
   }
 
   private void OnDisconnected() => Disconnected?.Invoke();
