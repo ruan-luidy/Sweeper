@@ -20,6 +20,13 @@ public partial class CoopDialog : UserControl
 
     viewModel.Connected += session =>
     {
+      // Cancelou no mesmo instante em que conectou: ninguém vai usar a sessão, então fecha pro parceiro saber.
+      if (result.Task.IsCompleted)
+      {
+        session.Dispose();
+        return;
+      }
+
       dialog.Close();
       result.TrySetResult(session);
     };
