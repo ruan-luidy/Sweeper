@@ -93,6 +93,18 @@
           Text="{Binding TimeText}" />
       </StackPanel>
 
+      <!--  Volta pro modo infinito. Desabilitado durante o coop.  -->
+      <Button
+        Margin="16,0,0,0"
+        Padding="6,0"
+        Command="{Binding OpenInfiniteCommand}"
+        Content="∞"
+        FontSize="24"
+        Focusable="False"
+        Foreground="{DynamicResource SecondaryTextBrush}"
+        Style="{StaticResource ButtonIcon}"
+        ToolTip="Modo infinito" />
+
       <!--  Escondido durante o coop; pra sair tem o botão na faixa de baixo do cabeçalho.  -->
       <Button
         Margin="16,0,0,0"

@@ -20,6 +20,7 @@ public sealed partial class MainViewModel : ObservableObject
   private readonly Func<GameSettings, Task<GameSettings?>> _editSettings;
   private readonly Func<Task<CoopSession?>> _connectCoop;
   private readonly Action<string> _notify;
+  private readonly Action _openInfinite;
   private readonly DispatcherTimer _timer;
   private readonly List<CellViewModel> _rangeCells = [];
 
@@ -33,18 +34,21 @@ public sealed partial class MainViewModel : ObservableObject
   private CoopSession? _coop;
 
   // editSettings e connectCoop devolvem null quando o usuário cancela. notify mostra um aviso rápido.
+  // openInfinite troca a janela pro modo infinito.
   public MainViewModel(
     TimeProvider timeProvider,
     Random random,
     Func<GameSettings, Task<GameSettings?>> editSettings,
     Func<Task<CoopSession?>> connectCoop,
-    Action<string> notify)
+    Action<string> notify,
+    Action openInfinite)
   {
     _timeProvider = timeProvider;
     _random = random;
     _editSettings = editSettings;
     _connectCoop = connectCoop;
     _notify = notify;
+    _openInfinite = openInfinite;
 
     // Menos de 1 s pra o display não pular segundos.
     _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
@@ -77,7 +81,7 @@ public sealed partial class MainViewModel : ObservableObject
   public partial GameFace Face { get; private set; }
 
   [ObservableProperty]
-  [NotifyCanExecuteChangedFor(nameof(OpenSettingsCommand))]
+  [NotifyCanExecuteChangedFor(nameof(OpenSettingsCommand), nameof(OpenInfiniteCommand))]
   public partial bool IsCoop { get; private set; }
 
   [ObservableProperty]
@@ -152,6 +156,12 @@ public sealed partial class MainViewModel : ObservableObject
 
   [RelayCommand]
   private void LeaveCoop() => EndCoop(message: null);
+
+  // O infinito não tem coop: sai do coop antes de trocar.
+  [RelayCommand(CanExecute = nameof(CanOpenInfinite))]
+  private void OpenInfinite() => _openInfinite();
+
+  private bool CanOpenInfinite() => _coop is null;
 
   [RelayCommand]
   private void Press()

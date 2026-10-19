@@ -11,6 +11,12 @@
         <ResourceDictionary Source="Resources/Emoji.xaml" />
         <ResourceDictionary Source="Resources/CellStyles.xaml" />
       </ResourceDictionary.MergedDictionaries>
+
+      <!-- Cartão branco com a sombra do HandyControl, usado nas duas telas. -->
+      <Style x:Key="CardStyle" TargetType="Border" BasedOn="{StaticResource BorderRegion}">
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Effect" Value="{StaticResource EffectShadow2}" />
+      </Style>
     </ResourceDictionary>
   </Application.Resources>
 </Application>
