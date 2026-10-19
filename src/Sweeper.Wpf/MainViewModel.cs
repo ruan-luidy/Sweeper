@@ -267,6 +267,7 @@ public sealed partial class MainViewModel : ObservableObject
     session.PartnerHovered += OnPartnerHovered;
     session.NewGameRequested += OnCoopNewGameRequested;
     session.Disconnected += OnCoopDisconnected;
+    session.Start();
 
     IsCoop = true;
     CoopText = session.IsHost

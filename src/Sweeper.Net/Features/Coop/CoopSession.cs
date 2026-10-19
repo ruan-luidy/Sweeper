@@ -17,7 +17,6 @@ public sealed class CoopSession : IDisposable
 
     _connection.MessageReceived += OnMessageReceived;
     _connection.Disconnected += OnDisconnected;
-    _connection.Start();
   }
 
   public bool IsHost { get; }
@@ -37,6 +36,10 @@ public sealed class CoopSession : IDisposable
   public event Action? NewGameRequested;
 
   public event Action? Disconnected;
+
+  // Chamar depois de assinar os eventos: uma mensagem que chegasse antes se perderia.
+  // Os eventos chegam no SynchronizationContext de quem chama (a thread da UI no WPF).
+  public void Start() => _connection.Start();
 
   // Só o host começa rodadas. Sem limite de tempo: cada máquina tem seu relógio e o tempo
   // acabaria em momentos diferentes, o que dessincroniza os tabuleiros.
