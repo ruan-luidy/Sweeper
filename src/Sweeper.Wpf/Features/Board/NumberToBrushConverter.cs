@@ -20,15 +20,11 @@ public sealed class NumberToBrushConverter : IValueConverter
     Brushes.Gray,
   ];
 
-  public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-  {
-    if (value is int number && number is >= 1 and <= 8)
-    {
-      return NumberBrushes[number - 1];
-    }
+  // null fora de 1..8. O tabuleiro infinito também usa, porque desenha os números na mão.
+  public static Brush? BrushFor(int number) => number is >= 1 and <= 8 ? NumberBrushes[number - 1] : null;
 
-    return DependencyProperty.UnsetValue;
-  }
+  public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+    value is int number && BrushFor(number) is { } brush ? brush : DependencyProperty.UnsetValue;
 
   public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
     throw new NotSupportedException();
