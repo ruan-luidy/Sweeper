@@ -7,26 +7,16 @@ namespace Sweeper.Wpf;
 // Troca a janela entre o modo infinito e o clássico. Os dois ficam vivos: voltar pro clássico não perde a partida.
 public sealed partial class ShellViewModel : ObservableObject
 {
-  private readonly InfiniteStore _store;
-
   // Os modos são criados aqui porque precisam do callback de troca, que aponta pra esta shell.
   public ShellViewModel(
-    InfiniteStore store,
     Func<Action, MainViewModel> createClassic,
     Func<Action, InfiniteViewModel> createInfinite)
   {
-    _store = store;
     Classic = createClassic(ShowInfinite);
     Infinite = createInfinite(ShowClassic);
 
-    if (store.Preferences.StartInClassic)
-    {
-      ShowClassic();
-    }
-    else
-    {
-      ShowInfinite();
-    }
+    // Sempre abre no infinito; o clássico fica a um clique.
+    ShowInfinite();
   }
 
   public MainViewModel Classic { get; }
@@ -42,7 +32,6 @@ public sealed partial class ShellViewModel : ObservableObject
   // Chamado ao fechar o app.
   public void Save()
   {
-    _store.Preferences.StartInClassic = !IsInfinite;
     Infinite.Save();
   }
 

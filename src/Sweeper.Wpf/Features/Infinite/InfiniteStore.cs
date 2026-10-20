@@ -11,8 +11,6 @@ public sealed record InfiniteSave(InfiniteSnapshot Game, double CenterX, double 
 
 public sealed class Preferences
 {
-  public bool StartInClassic { get; set; }
-
   public InfiniteMode InfiniteMode { get; set; } = InfiniteMode.Endless;
 
   public int BestEndless { get; set; }

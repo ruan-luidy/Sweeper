@@ -18,7 +18,6 @@ public partial class App : Application
     // Os ViewModels recebem os diálogos e avisos como funções, sem conhecer as telas.
     var store = new InfiniteStore();
     _shell = new ShellViewModel(
-      store,
       openInfinite => new MainViewModel(
         TimeProvider.System,
         Random.Shared,
